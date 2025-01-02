@@ -3,22 +3,43 @@ async function fetchLatestNews() {
     try {
         const response = await fetch('/api/news');
         const data = await response.json();
-        displayNews(data.posts);
+        displayNews(data);
     } catch (error) {
         console.error('Erreur:', error);
         showError('Impossible de charger les articles');
     }
 }
 
-// TODO: Question 1 - Compléter la fonction displayNews
+// Fonction pour afficher les articles
 function displayNews(news) {
     const container = document.getElementById('news-container');
-    // Utilisez Bootstrap pour créer des cards pour chaque article
+    container.innerHTML = '';
+    if (!news || news.length === 0) {
+        container.innerHTML = '<p>Aucun article disponible.</p>';
+        return;
+    }
+
+    news.forEach(article => {
+        const card = document.createElement('div');
+        card.className = 'col-md-4 mb-4';
+        card.innerHTML = `
+            <div class="card h-100">
+                <img src="${article.image}" class="card-img-top" alt="${article.title}">
+                <div class="card-body">
+                    <h5 class="card-title">${article.title}</h5>
+                    <p class="card-text">${article.description}</p>
+                    <a href="/news.html?id=${article.id}" class="btn btn-primary">Lire plus</a>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
 }
 
-// TODO: Question 2 - Créer une fonction pour gérer les erreurs
+// Fonction pour afficher les erreurs
 function showError(message) {
-    // Afficher un message d'erreur avec Bootstrap
+    const container = document.getElementById('news-container');
+    container.innerHTML = `<div class="alert alert-danger" role="alert">${message}</div>`;
 }
 
 // Initialisation

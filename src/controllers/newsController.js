@@ -1,24 +1,49 @@
 const axios = require('axios');
-
-const DUMMY_JSON_URL = 'https://dummyjson.com/posts';
+const DUMMY_JSON_URL = 'http://localhost:5000/posts';
 
 const newsController = {
-    // TODO: Question 5 - Implémenter les méthodes du contrôleur
     async getAllNews(req, res) {
         try {
-            // Utiliser axios pour faire une requête à DummyJSON
+            const response = await axios.get(DUMMY_JSON_URL);
+            res.json(response.data);
         } catch (error) {
-            res.status(500).json({ message: 'Erreur serveur' });
+            res.status(500).json({ message: 'Erreur lors de la récupération des articles.' });
         }
     },
 
     async getNewsById(req, res) {
-        // TODO: Implémenter la récupération d'un article par son ID
+        try {
+            const response = await axios.get(`${DUMMY_JSON_URL}/${req.params.id}`);
+            res.json(response.data);
+        } catch (error) {
+            res.status(404).json({ message: 'Article non trouvé.' });
+        }
     },
 
     async createNews(req, res) {
-        // TODO: Implémenter la création d'un article
+        try {
+            const { title, description, image } = req.body;
+            if (!title || !description || !image) {
+                return res.status(400).json({ message: 'Tous les champs sont requis.' });
+            }
+    
+            // Simuler un ID unique
+            const newArticle = {
+                id: Date.now(),
+                title,
+                description,
+                image,
+            };
+    
+            // Ajouter l'article à une base JSON simulée (si elle est implémentée)
+            // Par exemple, si vous avez un fichier `db.json`, ajoutez l'article ici.
+    
+            res.status(201).json(newArticle);
+        } catch (error) {
+            res.status(500).json({ message: 'Erreur serveur lors de la création.' });
+        }
     }
+    
 };
 
 module.exports = newsController;
